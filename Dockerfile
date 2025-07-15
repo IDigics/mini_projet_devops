@@ -1,3 +1,4 @@
+ARG CACHEBUST=1
 FROM node:20-alpine
 
 ENV MONGO_DB_USERNAME=admin \
