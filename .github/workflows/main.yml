@@ -1,0 +1,10 @@
+name: CI/CD
+on: push
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t 192.168.10.20:5000/node-app:latest .
+      - run: docker push 192.168.10.20:5000/node-app:latest
+      - run: ansible-playbook ~/ansible/playbook.yml -i ~/ansible/inventory.ini
