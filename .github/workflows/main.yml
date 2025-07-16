@@ -5,13 +5,14 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
+      
       - name: Build and Push
         run: |
-      # Force rebuild without cache and tag with commit SHA
-        docker build --no-cache -t 192.168.10.20:5000/node-app:latest -t 192.168.10.20:5000/node-app:${GITHUB_SHA} .
-        docker push 192.168.10.20:5000/node-app:latest
-        docker push 192.168.10.20:5000/node-app:${GITHUB_SHA}
+          # Force rebuild without cache and tag with commit SHA
+          docker build --no-cache -t 192.168.10.20:5000/node-app:latest -t 192.168.10.20:5000/node-app:${GITHUB_SHA} .
+          docker push 192.168.10.20:5000/node-app:latest
+          docker push 192.168.10.20:5000/node-app:${GITHUB_SHA}
       
-  - name: Deploy
-    run: |
-    ansible-playbook ~/ansible/playbook.yml -i ~/ansible/inventory.ini --ask-become-pass
+      - name: Deploy
+        run: |
+          ansible-playbook ~/ansible/playbook.yml -i ~/ansible/inventory.ini --ask-become-pass
