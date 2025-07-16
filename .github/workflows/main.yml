@@ -4,16 +4,24 @@ jobs:
   deploy:
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Build and Push
-        run: |
-          docker buildx build \
-            --no-cache \
-            --push \
-            -t 192.168.10.20:5000/node-app:latest \
-            -t 192.168.10.20:5000/node-app:${GITHUB_SHA} .
-      
-      - name: Deploy
-        run: |
-          ansible-playbook ~/ansible/playbook.yml -i ~/ansible/inventory.ini --ask-become-pass
+     
+          - uses: actions/checkout@v4
+  
+          - name: Build and Push
+            run: |
+              # Get current timestamp (format: YYYYMMDD-HHMMSS)
+              TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
+              
+              # Build with timestamp tag only
+              docker build -t 192.168.10.20:5000/node-app:$TIMESTAMP .
+              
+              # Push with timestamp
+              docker push 192.168.10.20:5000/node-app:$TIMESTAMP
+              
+              # Store timestamp for Ansible
+              echo "IMAGE_TAG=$TIMESTAMP" >> $GITHUB_ENV
+              
+          - name: Deploy
+            run: |
+              ansible-playbook ~/ansible/playbook.yml -i ~/ansible/inventory.ini \
+                --extra-vars "image_tag=$IMAGE_TAG" --ask-become-pass
