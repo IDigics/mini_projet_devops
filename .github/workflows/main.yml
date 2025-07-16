@@ -8,10 +8,11 @@ jobs:
       
       - name: Build and Push
         run: |
-          # Force rebuild without cache and tag with commit SHA
-          docker build --no-cache -t 192.168.10.20:5000/node-app:latest -t 192.168.10.20:5000/node-app:${GITHUB_SHA} .
-          docker push 192.168.10.20:5000/node-app:latest
-          docker push 192.168.10.20:5000/node-app:${GITHUB_SHA}
+          docker buildx build \
+            --no-cache \
+            --push \
+            -t 192.168.10.20:5000/node-app:latest \
+            -t 192.168.10.20:5000/node-app:${GITHUB_SHA} .
       
       - name: Deploy
         run: |
